@@ -1,5 +1,6 @@
 package com.Zaezul.CoronavirusTracker.services;
 
+import com.Zaezul.CoronavirusTracker.models.LocationStats;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,7 +15,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * This class is responsible from fetching raw csv data and parsing it into a readable format.
@@ -43,6 +46,8 @@ public class CoronaVirusDataService {
                 "csse_covid_19_daily_reports/" + currentMonth + "-" + currentDay + "-" + currentYear + ".csv";
     }
 
+    private List<LocationStats> allStats = new ArrayList<>();
+
     /**
      * Scheduled method to be run that pulls data from latest csv as an HttpResponse. Using apache's csv library, we
      * can parse through each record with the first containing all of our headers.
@@ -50,9 +55,12 @@ public class CoronaVirusDataService {
      * @throws InterruptedException
      */
     @PostConstruct
-    @Scheduled(cron = "* * * * * *")
+    @Scheduled(cron = "* * 1 * * *")
     public void fetchData() throws IOException, InterruptedException {
         formatDateAndCreateURL();
+
+        List<LocationStats> newStats = new ArrayList<>();
+
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(DATA_URL)).build();
 
@@ -62,9 +70,35 @@ public class CoronaVirusDataService {
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
 
         for (CSVRecord record : records) {
-            String state = record.get("Province_State");
-            System.out.println(state);
+            LocationStats locationStat = new LocationStats();
+
+            locationStat.setState(record.get("Province_State"));
+            locationStat.setCountry(record.get("Country_Region"));
+            locationStat.setLatestTotalCases(Integer.parseInt(record.get("Confirmed")));
+
+            if (record.get("Recovered") == "") {
+                locationStat.setRecoveredCases(0);
+            } else {
+                locationStat.setRecoveredCases(Integer.parseInt(record.get("Recovered")));
+            }
+
+            if (record.get("Incident_Rate") == "") {
+                locationStat.setIncidentRate(0);
+            } else {
+                locationStat.setIncidentRate(Double.parseDouble(record.get("Incident_Rate")));
+            }
+
+            if (record.get("Case_Fatality_Ratio") == "") {
+                locationStat.setCaseFatalityRatio(0);
+            } else {
+                locationStat.setCaseFatalityRatio(Double.parseDouble(record.get("Case_Fatality_Ratio")));
+            }
+
+            System.out.println(locationStat);
+            newStats.add(locationStat);
         }
+
+        this.allStats = newStats;
     }
 
 }
