@@ -116,7 +116,7 @@ public class CoronaVirusDataService {
                 locationStat.setCaseFatalityRatio(round(Double.parseDouble(record.get("Case_Fatality_Ratio")), 2));
             }
 
-            System.out.println(locationStat);
+            //System.out.println(locationStat);
             newStats.add(locationStat);
         }
 

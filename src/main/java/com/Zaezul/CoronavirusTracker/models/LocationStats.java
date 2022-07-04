@@ -2,20 +2,12 @@ package com.Zaezul.CoronavirusTracker.models;
 
 public class LocationStats {
 
-    private String state;
     private String country;
+    private String state;
     private int latestTotalCases;
     private int recoveredCases;
     private double incidentRate;
     private double caseFatalityRatio;
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
 
     public String getCountry() {
         return country;
@@ -23,6 +15,14 @@ public class LocationStats {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public int getTotalCases() {

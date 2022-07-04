@@ -5,6 +5,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Coronavirus Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 
 <body>
@@ -12,12 +13,14 @@
     <table>
         <tr>
             <th>Country</th>
+            <th>State</th>
             <th>Total Cases Reported</th>
             <th>Incident Rate</th>
             <th>Case Fatality Ratio</th>
         </tr>
         <tr th:each="stat : ${locationStats}">
             <td th:text="${stat.getCountry()}"></td>
+            <td th:text="${stat.getState()}"></td>
             <td th:text="${stat.getTotalCases()}"></td>
             <td th:text="${stat.getIncidentRate()}"></td>
             <td th:text="${stat.getCaseFatalityRatio()}"></td>
