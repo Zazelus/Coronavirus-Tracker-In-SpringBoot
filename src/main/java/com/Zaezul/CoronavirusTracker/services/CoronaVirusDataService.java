@@ -7,8 +7,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.xml.stream.Location;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -32,7 +35,28 @@ public class CoronaVirusDataService {
     private static String currentYear  = String.valueOf(localDate.getYear());
     private static String currentMonth = String.valueOf(localDate.getMonthValue());
     private static String currentDay   = String.valueOf(localDate.getDayOfMonth() - 1);
+
     private static String DATA_URL;
+
+    private List<LocationStats> allStats = new ArrayList<>();
+
+    public List<LocationStats> getAllStats() {
+        return allStats;
+    }
+
+    /**
+     * Better rounding function for large decimal places.
+     * @param value value to be rounded
+     * @param places the amount of places to round to
+     * @return the new decimal value
+     */
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 
     /**
      * File names follow a format like: MM-DD-YYYY, so we'll need to format the current month and days if they are
@@ -45,8 +69,6 @@ public class CoronaVirusDataService {
         DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/" +
                 "csse_covid_19_daily_reports/" + currentMonth + "-" + currentDay + "-" + currentYear + ".csv";
     }
-
-    private List<LocationStats> allStats = new ArrayList<>();
 
     /**
      * Scheduled method to be run that pulls data from latest csv as an HttpResponse. Using apache's csv library, we
@@ -74,7 +96,7 @@ public class CoronaVirusDataService {
 
             locationStat.setState(record.get("Province_State"));
             locationStat.setCountry(record.get("Country_Region"));
-            locationStat.setLatestTotalCases(Integer.parseInt(record.get("Confirmed")));
+            locationStat.setTotalCases(Integer.parseInt(record.get("Confirmed")));
 
             if (record.get("Recovered") == "") {
                 locationStat.setRecoveredCases(0);
@@ -85,13 +107,13 @@ public class CoronaVirusDataService {
             if (record.get("Incident_Rate") == "") {
                 locationStat.setIncidentRate(0);
             } else {
-                locationStat.setIncidentRate(Double.parseDouble(record.get("Incident_Rate")));
+                locationStat.setIncidentRate(round(Double.parseDouble(record.get("Incident_Rate")), 2));
             }
 
             if (record.get("Case_Fatality_Ratio") == "") {
                 locationStat.setCaseFatalityRatio(0);
             } else {
-                locationStat.setCaseFatalityRatio(Double.parseDouble(record.get("Case_Fatality_Ratio")));
+                locationStat.setCaseFatalityRatio(round(Double.parseDouble(record.get("Case_Fatality_Ratio")), 2));
             }
 
             System.out.println(locationStat);

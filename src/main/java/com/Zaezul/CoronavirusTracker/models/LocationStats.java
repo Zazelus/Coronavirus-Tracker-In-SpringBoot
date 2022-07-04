@@ -25,11 +25,11 @@ public class LocationStats {
         this.country = country;
     }
 
-    public int getLatestTotalCases() {
+    public int getTotalCases() {
         return latestTotalCases;
     }
 
-    public void setLatestTotalCases(int latestTotalCases) {
+    public void setTotalCases(int latestTotalCases) {
         this.latestTotalCases = latestTotalCases;
     }
 
@@ -62,7 +62,7 @@ public class LocationStats {
         return "LocationStats{" +
                 "state='" + state + '\'' +
                 ", country='" + country + '\'' +
-                ", latestTotalCases=" + latestTotalCases +
+                ", totalCases=" + latestTotalCases +
                 ", recoveredCases=" + recoveredCases +
                 ", incidentRate=" + incidentRate +
                 ", caseFatalityRatio=" + caseFatalityRatio +

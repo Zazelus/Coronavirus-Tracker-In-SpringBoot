@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Coronavirus Tracker</title>
+</head>
+
+<body>
+    <h1>Coronavirus Tracker</h1>
+    <table>
+        <tr>
+            <th>Country</th>
+            <th>Total Cases Reported</th>
+            <th>Incident Rate</th>
+            <th>Case Fatality Ratio</th>
+        </tr>
+        <tr th:each="stat : ${locationStats}">
+            <td th:text="${stat.getCountry()}"></td>
+            <td th:text="${stat.getTotalCases()}"></td>
+            <td th:text="${stat.getIncidentRate()}"></td>
+            <td th:text="${stat.getCaseFatalityRatio()}"></td>
+        </tr>
+    </table>
+</body>
+
+</html>
