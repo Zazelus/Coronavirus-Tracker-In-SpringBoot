@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -92,20 +93,31 @@ public class CoronaVirusDataService {
 
         List<LocationStats> newStats = new ArrayList<>();
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(CURRENT_DATA_URL)).build();
+        HttpClient prevDataClient = HttpClient.newHttpClient();
+        HttpClient currentClient = HttpClient.newHttpClient();
 
-        HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
-        StringReader csvBodyReader = new StringReader(httpResponse.body());
+        HttpRequest prevDayDataRequest = HttpRequest.newBuilder().uri(URI.create(PREVIOUS_DAY_DATA_URL)).build();
+        HttpRequest currentDayDataRequest = HttpRequest.newBuilder().uri(URI.create(CURRENT_DATA_URL)).build();
 
-        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
+        HttpResponse<String> prevDayHttpResponse = prevDataClient.send(prevDayDataRequest,
+                HttpResponse.BodyHandlers.ofString());
+        StringReader prevDayCsvBodyReader = new StringReader(prevDayHttpResponse.body());
+
+        Iterable<CSVRecord> prevRecords = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(prevDayCsvBodyReader);
+
+        HttpResponse<String> currentDayHttpResponse = currentClient.send(currentDayDataRequest,
+                HttpResponse.BodyHandlers.ofString());
+        StringReader currentDayCsvBodyReader = new StringReader(currentDayHttpResponse.body());
+
+        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(currentDayCsvBodyReader);
 
         for (CSVRecord record : records) {
             LocationStats locationStat = new LocationStats();
+            int totalCases = Integer.parseInt(record.get("Confirmed"));
 
             locationStat.setState(record.get("Province_State"));
             locationStat.setCountry(record.get("Country_Region"));
-            locationStat.setTotalCases(Integer.parseInt(record.get("Confirmed")));
+            locationStat.setTotalCases(totalCases);
 
             if (record.get("Recovered") == "") {
                 locationStat.setRecoveredCases(0);
@@ -122,14 +134,18 @@ public class CoronaVirusDataService {
             if (record.get("Case_Fatality_Ratio") == "") {
                 locationStat.setCaseFatalityRatio(0);
             } else {
-                locationStat.setCaseFatalityRatio(round(Double.parseDouble(record.get("Case_Fatality_Ratio")), 2));
+                locationStat.setCaseFatalityRatio(round(Double.parseDouble(record.get("Case_Fatality_Ratio")),
+                        2));
             }
 
-            //System.out.println(locationStat);
+            if (prevRecords.iterator().hasNext()) {
+                int prevTotalCases = Integer.parseInt(prevRecords.iterator().next().get("Confirmed"));
+                locationStat.setDiffFromPrevDay(totalCases - prevTotalCases);
+            }
+
             newStats.add(locationStat);
         }
-        //System.out.println(PREVIOUS_DAY_DATA_URL);
-        //System.out.println(CURRENT_DATA_URL);
+
         this.allStats = newStats;
     }
 

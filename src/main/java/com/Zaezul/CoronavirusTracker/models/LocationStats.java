@@ -8,6 +8,7 @@ public class LocationStats {
     private int recoveredCases;
     private double incidentRate;
     private double caseFatalityRatio;
+    private int diffFromPrevDay;
 
     public String getCountry() {
         return country;
@@ -55,6 +56,14 @@ public class LocationStats {
 
     public void setCaseFatalityRatio(double caseFatalityRatio) {
         this.caseFatalityRatio = caseFatalityRatio;
+    }
+
+    public int getDiffFromPrevDay() {
+        return diffFromPrevDay;
+    }
+
+    public void setDiffFromPrevDay(int diffFromPrevDay) {
+        this.diffFromPrevDay = diffFromPrevDay;
     }
 
     @Override
