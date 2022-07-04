@@ -32,13 +32,12 @@ import java.util.List;
 public class CoronaVirusDataService {
 
     // Grabbing the previous day as that will have the most recent data.
-    private static Date currentDate = new Date();
-    private static LocalDate localDate = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    private static String currentYear  = String.valueOf(localDate.getYear());
-    private static String currentMonth = String.valueOf(localDate.getMonthValue());
-    private static String currentDay   = String.valueOf(localDate.getDayOfMonth() - 1);
+    private Instant now = Instant.now();
+    private Instant yesterday = now.minus(1, ChronoUnit.DAYS);
+    private Instant beforeYesterday = yesterday.minus(1, ChronoUnit.DAYS);
 
-    private static String DATA_URL;
+    private static String PREVIOUS_DAY_DATA_URL;
+    private static String CURRENT_DATA_URL;
 
     private List<LocationStats> allStats = new ArrayList<>();
 
@@ -65,11 +64,19 @@ public class CoronaVirusDataService {
      * greater than 10.
      */
     public void formatDateAndCreateURL() {
-        if (Integer.parseInt(currentMonth) < 10) {currentMonth = "0" + currentMonth;}
-        if (Integer.parseInt(currentDay) < 10) {currentDay = "0" + currentDay;}
+        String currentMonth = yesterday.toString().substring(5, 7);
+        String currentDay = yesterday.toString().substring(8, 10);
+        String currentYear = yesterday.toString().substring(0, 4);
 
-        DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/" +
+        String previousMonth = beforeYesterday.toString().substring(5, 7);
+        String previousDay = beforeYesterday.toString().substring(8, 10);;
+        String previousYear = beforeYesterday.toString().substring(0, 4);;
+
+        CURRENT_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/" +
                 "csse_covid_19_daily_reports/" + currentMonth + "-" + currentDay + "-" + currentYear + ".csv";
+
+        PREVIOUS_DAY_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/" +
+                "csse_covid_19_daily_reports/" + previousMonth + "-" + previousDay + "-" + previousYear + ".csv";
     }
 
     /**
@@ -86,7 +93,7 @@ public class CoronaVirusDataService {
         List<LocationStats> newStats = new ArrayList<>();
 
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(DATA_URL)).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(CURRENT_DATA_URL)).build();
 
         HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
         StringReader csvBodyReader = new StringReader(httpResponse.body());
@@ -121,7 +128,8 @@ public class CoronaVirusDataService {
             //System.out.println(locationStat);
             newStats.add(locationStat);
         }
-
+        //System.out.println(PREVIOUS_DAY_DATA_URL);
+        //System.out.println(CURRENT_DATA_URL);
         this.allStats = newStats;
     }
 
