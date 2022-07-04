@@ -9,8 +9,20 @@
 </head>
 
 <body>
-    <h1>Coronavirus Tracker</h1>
-    <table>
+
+    <div class="p-5 mb-4 bg-light">
+        <div class="container-fluid py-5">
+            <h1 class="display-4">Coronavirus Tracker</h1>
+            <p class="lead">This application lists the total number of coronavirus cases that have been reported globally since the start
+                of the pandemic.
+            </p>
+            <h1 class="display-4" th:text="${totalReportedCases}"></h1>
+            <hr class="my-4">
+            <p class="lead">Total cases reported internationally since the start of the pandemic.</p>
+        </div>
+    </div>
+
+    <table class="table table-dark table-striped table-hover table-bordered table-sm">
         <tr>
             <th>Country</th>
             <th>State</th>
@@ -18,13 +30,15 @@
             <th>Incident Rate</th>
             <th>Case Fatality Ratio</th>
         </tr>
-        <tr th:each="stat : ${locationStats}">
-            <td th:text="${stat.getCountry()}"></td>
-            <td th:text="${stat.getState()}"></td>
-            <td th:text="${stat.getTotalCases()}"></td>
-            <td th:text="${stat.getIncidentRate()}"></td>
-            <td th:text="${stat.getCaseFatalityRatio()}"></td>
-        </tr>
+        <tbody class="table-group-divider">
+            <tr th:each="stat : ${locationStats}">
+                <td th:text="${stat.getCountry()}"></td>
+                <td th:text="${stat.getState()}"></td>
+                <td th:text="${stat.getTotalCases()}"></td>
+                <td th:text="${stat.getIncidentRate()}"></td>
+                <td th:text="${stat.getCaseFatalityRatio()}"></td>
+            </tr>
+        </tbody>
     </table>
 </body>
 
