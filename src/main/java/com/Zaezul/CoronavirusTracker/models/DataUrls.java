@@ -3,6 +3,9 @@ package com.Zaezul.CoronavirusTracker.models;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Handles creation of urls for our updated csv and yesterday's csv.
+ */
 public class DataUrls {
 
     private Instant now = Instant.now();

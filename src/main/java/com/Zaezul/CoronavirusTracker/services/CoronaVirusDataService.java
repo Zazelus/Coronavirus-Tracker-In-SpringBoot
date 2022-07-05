@@ -54,6 +54,20 @@ public class CoronaVirusDataService {
     }
 
     /**
+     * Creates an Iterable of CSV records by sending a request for the appropriate csv file.
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public Iterable<CSVRecord> createCsvIterable(HttpClient client, HttpRequest request)
+            throws IOException, InterruptedException {
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        StringReader csvBodyReader = new StringReader(response.body());
+
+        return CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
+    }
+
+    /**
      * Scheduled method to be run that pulls data from latest csv as an HttpResponse. Using apache's csv library, we
      * can parse through each record with the first containing all of our headers.
      * @throws IOException
@@ -73,18 +87,10 @@ public class CoronaVirusDataService {
         HttpRequest prevDayDataRequest = HttpRequest.newBuilder().uri(URI.create(urls[0])).build();
         HttpRequest currentDayDataRequest = HttpRequest.newBuilder().uri(URI.create(urls[1])).build();
 
-        HttpResponse<String> prevDayHttpResponse = prevDataClient.send(prevDayDataRequest,
-                HttpResponse.BodyHandlers.ofString());
-        StringReader prevDayCsvBodyReader = new StringReader(prevDayHttpResponse.body());
+        Iterable<CSVRecord> prevRecords = createCsvIterable(prevDataClient, prevDayDataRequest);
+        Iterable<CSVRecord> records = createCsvIterable(currentClient, currentDayDataRequest);
 
-        Iterable<CSVRecord> prevRecords = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(prevDayCsvBodyReader);
-
-        HttpResponse<String> currentDayHttpResponse = currentClient.send(currentDayDataRequest,
-                HttpResponse.BodyHandlers.ofString());
-        StringReader currentDayCsvBodyReader = new StringReader(currentDayHttpResponse.body());
-
-        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(currentDayCsvBodyReader);
-
+        // Go through each record and add it to our LocationStats model.
         for (CSVRecord record : records) {
             LocationStats locationStat = new LocationStats();
             int totalCases = Integer.parseInt(record.get("Confirmed"));
