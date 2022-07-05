@@ -1,5 +1,6 @@
 package com.Zaezul.CoronavirusTracker.services;
 
+import com.Zaezul.CoronavirusTracker.models.DataUrls;
 import com.Zaezul.CoronavirusTracker.models.LocationStats;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -32,14 +33,6 @@ import java.util.List;
 @Service
 public class CoronaVirusDataService {
 
-    // Grabbing the previous day as that will have the most recent data.
-    private Instant now = Instant.now();
-    private Instant yesterday = now.minus(1, ChronoUnit.DAYS);
-    private Instant beforeYesterday = yesterday.minus(1, ChronoUnit.DAYS);
-
-    private static String PREVIOUS_DAY_DATA_URL;
-    private static String CURRENT_DATA_URL;
-
     private List<LocationStats> allStats = new ArrayList<>();
 
     public List<LocationStats> getAllStats() {
@@ -61,26 +54,6 @@ public class CoronaVirusDataService {
     }
 
     /**
-     * File names follow a format like: MM-DD-YYYY, so we'll need to format the current month and days if they are
-     * greater than 10.
-     */
-    public void formatDateAndCreateURL() {
-        String currentMonth = yesterday.toString().substring(5, 7);
-        String currentDay = yesterday.toString().substring(8, 10);
-        String currentYear = yesterday.toString().substring(0, 4);
-
-        String previousMonth = beforeYesterday.toString().substring(5, 7);
-        String previousDay = beforeYesterday.toString().substring(8, 10);
-        String previousYear = beforeYesterday.toString().substring(0, 4);
-
-        CURRENT_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/" +
-                "csse_covid_19_daily_reports/" + currentMonth + "-" + currentDay + "-" + currentYear + ".csv";
-
-        PREVIOUS_DAY_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/" +
-                "csse_covid_19_daily_reports/" + previousMonth + "-" + previousDay + "-" + previousYear + ".csv";
-    }
-
-    /**
      * Scheduled method to be run that pulls data from latest csv as an HttpResponse. Using apache's csv library, we
      * can parse through each record with the first containing all of our headers.
      * @throws IOException
@@ -89,15 +62,16 @@ public class CoronaVirusDataService {
     @PostConstruct
     @Scheduled(cron = "* * 1 * * *")
     public void fetchData() throws IOException, InterruptedException {
-        formatDateAndCreateURL();
+        DataUrls dataUrls = new DataUrls();
+        String[] urls = dataUrls.getUrls();
 
         List<LocationStats> newStats = new ArrayList<>();
 
         HttpClient prevDataClient = HttpClient.newHttpClient();
         HttpClient currentClient = HttpClient.newHttpClient();
 
-        HttpRequest prevDayDataRequest = HttpRequest.newBuilder().uri(URI.create(PREVIOUS_DAY_DATA_URL)).build();
-        HttpRequest currentDayDataRequest = HttpRequest.newBuilder().uri(URI.create(CURRENT_DATA_URL)).build();
+        HttpRequest prevDayDataRequest = HttpRequest.newBuilder().uri(URI.create(urls[0])).build();
+        HttpRequest currentDayDataRequest = HttpRequest.newBuilder().uri(URI.create(urls[1])).build();
 
         HttpResponse<String> prevDayHttpResponse = prevDataClient.send(prevDayDataRequest,
                 HttpResponse.BodyHandlers.ofString());
