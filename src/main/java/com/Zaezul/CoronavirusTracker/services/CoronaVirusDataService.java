@@ -125,13 +125,13 @@ public class CoronaVirusDataService {
                 locationStat.setRecoveredCases(Integer.parseInt(record.get("Recovered")));
             }*/
 
-            if (record.get("Incident_Rate") == "") {
+            if (record.get("Incident_Rate").equals("")) {
                 locationStat.setIncidentRate(0);
             } else {
                 locationStat.setIncidentRate(round(Double.parseDouble(record.get("Incident_Rate")), 2));
             }
 
-            if (record.get("Case_Fatality_Ratio") == "") {
+            if (record.get("Case_Fatality_Ratio").equals("")) {
                 locationStat.setCaseFatalityRatio(0);
             } else {
                 locationStat.setCaseFatalityRatio(round(Double.parseDouble(record.get("Case_Fatality_Ratio")),
