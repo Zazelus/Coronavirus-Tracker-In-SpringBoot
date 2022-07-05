@@ -6,22 +6,30 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Coronavirus Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="./javascript/script.js"></script>
 </head>
 
 <body>
     <!-- <div class="container"> -->
-        <table class="table table-dark table-striped table-hover table-bordered table-sm">
-            <div class="p-5 bg-light rounded">
-                <div class="container-fluid py-5 rounded">
-                    <h1 class="display-4">Coronavirus Tracker</h1>
-                    <p class="lead">This application lists the total number of coronavirus cases that have been reported globally since the start
-                        of the pandemic.
-                    </p>
-                    <hr class="my-4">
-                    <h1 class="display-4" th:text="${totalReportedCases}"></h1>
-                    <p class="lead">Total cases reported internationally since the start of the pandemic.</p>
-                </div>
+        <div class="p-5 bg-light rounded">
+            <div class="container-fluid py-5 rounded">
+                <h1 class="display-4">Coronavirus Tracker</h1>
+                <p class="lead">This application lists the total number of coronavirus cases that have been reported globally since the start
+                    of the pandemic.
+                </p>
+                <hr class="my-4">
+                <h1 class="display-4" th:text="${totalReportedCases}"></h1>
+                <p class="lead">Total cases reported internationally since the start of the pandemic.</p>
             </div>
+        </div>
+
+        <!--<form th:action="@{/search}" method="get">
+            <input type="text" name="keyword" th:value="${keyword}"  placeholder="Find by Country and State" size="50" >
+            <button type="submit" class="btn btn-info" >Search</button>
+            <button type="submit" class="btn btn-info" >Reset</button>
+        </form>-->
+
+        <table class="table table-dark table-striped table-hover table-bordered table-sm" id="table">
             <tr>
                 <th>Country</th>
                 <th>State</th>
