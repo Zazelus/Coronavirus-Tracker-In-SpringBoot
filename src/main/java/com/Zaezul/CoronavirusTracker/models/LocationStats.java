@@ -34,14 +34,6 @@ public class LocationStats {
         this.latestTotalCases = latestTotalCases;
     }
 
-    public int getRecoveredCases() {
-        return recoveredCases;
-    }
-
-    public void setRecoveredCases(int recoveredCases) {
-        this.recoveredCases = recoveredCases;
-    }
-
     public double getIncidentRate() {
         return incidentRate;
     }
