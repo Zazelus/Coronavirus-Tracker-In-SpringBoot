@@ -119,11 +119,11 @@ public class CoronaVirusDataService {
             locationStat.setCountry(record.get("Country_Region"));
             locationStat.setTotalCases(totalCases);
 
-            if (record.get("Recovered") == "") {
+            /*if (record.get("Recovered") == "") {
                 locationStat.setRecoveredCases(0);
             } else {
                 locationStat.setRecoveredCases(Integer.parseInt(record.get("Recovered")));
-            }
+            }*/
 
             if (record.get("Incident_Rate") == "") {
                 locationStat.setIncidentRate(0);
