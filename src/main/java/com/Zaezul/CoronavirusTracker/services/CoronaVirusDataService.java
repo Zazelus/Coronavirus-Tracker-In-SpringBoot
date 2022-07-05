@@ -70,8 +70,8 @@ public class CoronaVirusDataService {
         String currentYear = yesterday.toString().substring(0, 4);
 
         String previousMonth = beforeYesterday.toString().substring(5, 7);
-        String previousDay = beforeYesterday.toString().substring(8, 10);;
-        String previousYear = beforeYesterday.toString().substring(0, 4);;
+        String previousDay = beforeYesterday.toString().substring(8, 10);
+        String previousYear = beforeYesterday.toString().substring(0, 4);
 
         CURRENT_DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/" +
                 "csse_covid_19_daily_reports/" + currentMonth + "-" + currentDay + "-" + currentYear + ".csv";
