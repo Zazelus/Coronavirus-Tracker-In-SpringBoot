@@ -19,7 +19,6 @@
 
     <div class="p-5 bg-light mb-2">
         <div class="container-fluid py-2">
-            <!--<h1 class="display-4">Coronavirus Tracker</h1>-->
             <p class="lead">This application lists the total number of coronavirus cases that have been reported globally since the start
                 of the pandemic.
             </p>
@@ -35,24 +34,29 @@
                 <th>Country</th>
                 <th>State</th>
                 <th>Total Cases Reported</th>
-                <th>Change From Previous Day</th>
+                <th>Change in 1 Day</th>
+                <th>Change in 30 Days</th>
                 <th>Incident Rate</th>
                 <th>Case Fatality Ratio</th>
             </tr>
         </thead>
-        <!--<tbody class="table-group-divider">-->
         <tbody>
             <tr th:each="stat : ${locationStats}">
-                <td th:text="${stat.getCountry()}"></td>
-                <td th:text="${stat.getState()}"></td>
-                <td th:text="${stat.getTotalCases()}"></td>
+                <td th:text="${stat.country}"></td>
+                <td th:text="${stat.state}"></td>
+                <td th:text="${stat.totalCases}"></td>
                 <td>
-                    <span th:if="${stat.getDiffFromPrevDay() > 0}" th:text="${'+' + stat.getDiffFromPrevDay()}" class="badge bg-danger"></span>
-                    <span th:if="${stat.getDiffFromPrevDay() == 0}" th:text="${stat.getDiffFromPrevDay()}" class="badge bg-dark"></span>
-                    <span th:if="${stat.getDiffFromPrevDay() < 0}" th:text="${stat.getDiffFromPrevDay()}" class="badge bg-primary"></span>
+                    <span th:if="${stat.diffFromPrevDay > 0}" th:text="${'+' + stat.diffFromPrevDay}" class="badge bg-danger"></span>
+                    <span th:if="${stat.diffFromPrevDay == 0}" th:text="${stat.diffFromPrevDay}" class="badge bg-dark"></span>
+                    <span th:if="${stat.diffFromPrevDay < 0}" th:text="${stat.diffFromPrevDay}" class="badge bg-primary"></span>
                 </td>
-                <td th:text="${stat.getIncidentRate()}"></td>
-                <td th:text="${stat.getCaseFatalityRatio()}"></td>
+                <td>
+                    <span th:if="${stat.diffFromPrevMonth > 0}" th:text="${'+' + stat.diffFromPrevMonth}" class="badge bg-danger"></span>
+                    <span th:if="${stat.diffFromPrevMonth == 0}" th:text="${stat.diffFromPrevMonth}" class="badge bg-dark"></span>
+                    <span th:if="${stat.diffFromPrevMonth < 0}" th:text="${stat.diffFromPrevMonth}" class="badge bg-primary"></span>
+                </td>
+                <td th:text="${stat.incidentRate}"></td>
+                <td th:text="${stat.caseFatalityRatio}"></td>
             </tr>
         </tbody>
     </table>

@@ -5,10 +5,10 @@ public class LocationStats {
     private String country;
     private String state;
     private int latestTotalCases;
-    private int recoveredCases;
     private double incidentRate;
     private double caseFatalityRatio;
     private int diffFromPrevDay;
+    private int diffFromPrevMonth;
 
     public String getCountry() {
         return country;
@@ -58,13 +58,20 @@ public class LocationStats {
         this.diffFromPrevDay = diffFromPrevDay;
     }
 
+    public int getDiffFromPrevMonth() {
+        return diffFromPrevMonth;
+    }
+
+    public void setDiffFromPrevMonth(int diffFromPrevMonth) {
+        this.diffFromPrevMonth = diffFromPrevMonth;
+    }
+
     @Override
     public String toString() {
         return "LocationStats{" +
                 "state='" + state + '\'' +
                 ", country='" + country + '\'' +
                 ", totalCases=" + latestTotalCases +
-                ", recoveredCases=" + recoveredCases +
                 ", incidentRate=" + incidentRate +
                 ", caseFatalityRatio=" + caseFatalityRatio +
                 '}';

@@ -1,6 +1,6 @@
 package com.Zaezul.CoronavirusTracker.services;
 
-import com.Zaezul.CoronavirusTracker.models.DataUrls;
+import com.Zaezul.CoronavirusTracker.models.DataUrlHandler;
 import com.Zaezul.CoronavirusTracker.models.LocationStats;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -76,22 +76,25 @@ public class CoronaVirusDataService {
     @PostConstruct
     @Scheduled(cron = "* * 1 * * *")
     public void fetchData() throws IOException, InterruptedException {
-        DataUrls dataUrls = new DataUrls();
-        String[] urls = dataUrls.getUrls();
+        DataUrlHandler dataUrlHandler = new DataUrlHandler();
+        String[] urls = dataUrlHandler.getUrls();
 
         List<LocationStats> newStats = new ArrayList<>();
 
-        HttpClient prevDataClient = HttpClient.newHttpClient();
-        HttpClient currentClient = HttpClient.newHttpClient();
+        HttpClient currentDayClient = HttpClient.newHttpClient();
+        HttpClient previousDayClient = HttpClient.newHttpClient();
+        HttpClient thirtyDayClient = HttpClient.newHttpClient();
 
-        HttpRequest prevDayDataRequest = HttpRequest.newBuilder().uri(URI.create(urls[0])).build();
-        HttpRequest currentDayDataRequest = HttpRequest.newBuilder().uri(URI.create(urls[1])).build();
+        HttpRequest currentDayDataRequest = HttpRequest.newBuilder().uri(URI.create(String.valueOf(urls[2]))).build();
+        HttpRequest previousDayRequest = HttpRequest.newBuilder().uri(URI.create(String.valueOf(urls[1]))).build();
+        HttpRequest thirtyDayRequest = HttpRequest.newBuilder().uri(URI.create(String.valueOf(urls[0]))).build();
 
-        Iterable<CSVRecord> prevRecords = createCsvIterable(prevDataClient, prevDayDataRequest);
-        Iterable<CSVRecord> records = createCsvIterable(currentClient, currentDayDataRequest);
+        Iterable<CSVRecord> currentRecords = createCsvIterable(currentDayClient, currentDayDataRequest);
+        Iterable<CSVRecord> previousRecords = createCsvIterable(previousDayClient, previousDayRequest);
+        Iterable<CSVRecord> thirtyDayRecords = createCsvIterable(thirtyDayClient, thirtyDayRequest);
 
         // Go through each record and add it to our LocationStats model.
-        for (CSVRecord record : records) {
+        for (CSVRecord record : currentRecords) {
             LocationStats locationStat = new LocationStats();
             int totalCases = Integer.parseInt(record.get("Confirmed"));
 
@@ -112,9 +115,14 @@ public class CoronaVirusDataService {
                         2));
             }
 
-            if (prevRecords.iterator().hasNext()) {
-                int prevTotalCases = Integer.parseInt(prevRecords.iterator().next().get("Confirmed"));
+            if (previousRecords.iterator().hasNext()) {
+                int prevTotalCases = Integer.parseInt(previousRecords.iterator().next().get("Confirmed"));
                 locationStat.setDiffFromPrevDay(totalCases - prevTotalCases);
+            }
+
+            if (thirtyDayRecords.iterator().hasNext()) {
+                int prevThirtyDayCases = Integer.parseInt(thirtyDayRecords.iterator().next().get("Confirmed"));
+                locationStat.setDiffFromPrevMonth(totalCases - prevThirtyDayCases);
             }
 
             newStats.add(locationStat);
