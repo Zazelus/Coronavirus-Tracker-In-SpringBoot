@@ -28,38 +28,49 @@
         </div>
     </div>
 
-    <table class="table table-striped table-hover table-bordered table-sm" id="covid-table">
-        <thead>
-            <tr>
-                <th>Country</th>
-                <th>State</th>
-                <th>Total Cases Reported</th>
-                <th>Change in 1 Day</th>
-                <th>Change in 30 Days</th>
-                <th>Incident Rate</th>
-                <th>Case Fatality Ratio</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="stat : ${locationStats}">
-                <td th:text="${stat.country}"></td>
-                <td th:text="${stat.state}"></td>
-                <td th:text="${stat.totalCases}"></td>
-                <td>
-                    <span th:if="${stat.diffFromPrevDay > 0}" th:text="${'+' + stat.diffFromPrevDay}" class="badge bg-danger"></span>
-                    <span th:if="${stat.diffFromPrevDay == 0}" th:text="${stat.diffFromPrevDay}" class="badge bg-dark"></span>
-                    <span th:if="${stat.diffFromPrevDay < 0}" th:text="${stat.diffFromPrevDay}" class="badge bg-primary"></span>
-                </td>
-                <td>
-                    <span th:if="${stat.diffFromPrevMonth > 0}" th:text="${'+' + stat.diffFromPrevMonth}" class="badge bg-danger"></span>
-                    <span th:if="${stat.diffFromPrevMonth == 0}" th:text="${stat.diffFromPrevMonth}" class="badge bg-dark"></span>
-                    <span th:if="${stat.diffFromPrevMonth < 0}" th:text="${stat.diffFromPrevMonth}" class="badge bg-primary"></span>
-                </td>
-                <td th:text="${stat.incidentRate}"></td>
-                <td th:text="${stat.caseFatalityRatio}"></td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="container mt-4">
+        <div class="alert alert-warning" role="alert">
+            <h4 class="alert-heading">Important Notice</h4>
+            <p>The repository containing the COVID-19 data has been archived as of 03/10/2023. The application in its current form only shows data relevant to 03/09/2023.</p>
+            <hr>
+            <p class="mb-0">Please note that the data shown in the table below corresponds to the latest available data up to 03/09/2023.</p>
+        </div>
+    </div>
+
+    <div class="p-5 bg-light mb-2">
+        <table class="table table-striped table-hover table-bordered table-sm" id="covid-table">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th>State</th>
+                    <th>Total Cases Reported</th>
+                    <th>Change in 1 Day</th>
+                    <th>Change in 30 Days</th>
+                    <th>Incident Rate</th>
+                    <th>Case Fatality Ratio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="stat : ${locationStats}">
+                    <td th:text="${stat.country}"></td>
+                    <td th:text="${stat.state}"></td>
+                    <td th:text="${stat.totalCases}"></td>
+                    <td>
+                        <span th:if="${stat.diffFromPrevDay > 0}" th:text="${'+' + stat.diffFromPrevDay}" class="badge bg-danger"></span>
+                        <span th:if="${stat.diffFromPrevDay == 0}" th:text="${stat.diffFromPrevDay}" class="badge bg-dark"></span>
+                        <span th:if="${stat.diffFromPrevDay < 0}" th:text="${stat.diffFromPrevDay}" class="badge bg-primary"></span>
+                    </td>
+                    <td>
+                        <span th:if="${stat.diffFromPrevMonth > 0}" th:text="${'+' + stat.diffFromPrevMonth}" class="badge bg-danger"></span>
+                        <span th:if="${stat.diffFromPrevMonth == 0}" th:text="${stat.diffFromPrevMonth}" class="badge bg-dark"></span>
+                        <span th:if="${stat.diffFromPrevMonth < 0}" th:text="${stat.diffFromPrevMonth}" class="badge bg-primary"></span>
+                    </td>
+                    <td th:text="${stat.incidentRate}"></td>
+                    <td th:text="${stat.caseFatalityRatio}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js" integrity="sha512-n/4gHW3atM3QqRcbCn6ewmpxcLAHGaDjpEBu4xZd47N0W2oQ+6q7oc3PXstrJYXcbNU1OHdQ1T7pAP+gi5Yu8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>

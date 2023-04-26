@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class HomeController {
      * @return index.html
      */
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model) throws IOException, InterruptedException {
         List<LocationStats> allStats = coronaVirusDataService.getAllStats();
 
         String casesSum = String.valueOf(allStats.stream().mapToInt(stat -> stat.getTotalCases()).sum());

@@ -35,7 +35,8 @@ public class CoronaVirusDataService {
 
     private List<LocationStats> allStats = new ArrayList<>();
 
-    public List<LocationStats> getAllStats() {
+    public List<LocationStats> getAllStats() throws IOException, InterruptedException {
+        fetchData();
         return allStats;
     }
 
@@ -59,11 +60,14 @@ public class CoronaVirusDataService {
      * @throws IOException
      * @throws InterruptedException
      */
-    public Iterable<CSVRecord> createCsvIterable(HttpClient client, HttpRequest request)
-            throws IOException, InterruptedException {
+    private Iterable<CSVRecord> createCsvIterable(HttpClient client, HttpRequest request) throws IOException, InterruptedException {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        StringReader csvBodyReader = new StringReader(response.body());
 
+        if (response.statusCode() != 200) {
+            throw new IOException("Failed to fetch the CSV data from the URL: " + request.uri() + " - Status code: " + response.statusCode());
+        }
+
+        StringReader csvBodyReader = new StringReader(response.body());
         return CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(csvBodyReader);
     }
 
@@ -74,7 +78,6 @@ public class CoronaVirusDataService {
      * @throws InterruptedException
      */
     @PostConstruct
-    @Scheduled(cron = "* * 1 * * *")
     public void fetchData() throws IOException, InterruptedException {
         DataUrlHandler dataUrlHandler = new DataUrlHandler();
         String[] urls = dataUrlHandler.getUrls();
