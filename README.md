@@ -1,3 +1,8 @@
+# Important Notice
+
+The repository containing the COVID-19 data has been archived as of 03/10/2023. The application in its current form only shows data relevant to 03/09/2023.
+
+Please note that the data shown in the table below corresponds to the latest available data up to 03/09/2023.
 # A SpringBoot Web Application That Tracks COVID-19 Cases
 This web page fetches data from the CSSEGISandData (https://github.com/CSSEGISandData/COVID-19) repository in CSV format, parses it and displays it on a web page. The service is scheduled to update every hour to check if there are any changes.
 
